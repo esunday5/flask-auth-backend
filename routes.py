@@ -49,13 +49,14 @@ def get_users():
 def test_db_connection():
     try:
         connection = pg8000.connect(
-            dbname="ekondo",
             user="admin",
             password="aZ2ryQ9DACsQNFDY1tQouCigbOO8N2ib",
             host="dpg-ctpbp40gph6c73dcjppg-a.oregon-postgres.render.com",
-            port=5432
+            port=5432,
+            database="ekondo"  # Correct parameter
         )
         connection.close()
         return {"message": "Database connection successful!"}, 200
     except Exception as e:
         return {"error": str(e)}, 500
+
