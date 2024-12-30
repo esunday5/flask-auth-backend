@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: flask-auth-backend
+    env: python
+    runtime: python3
+    plan: free
+    buildCommand: "pip install -r requirements.txt && flask db upgrade"
+    startCommand: "gunicorn run:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: SECRET_KEY
+        value: xyz-old-norse-admin-2580$$
+      - key: DATABASE_URL
+        value: postgresql+pg8000://admin:aZ2ryQ9DACsQNFDY1tQouCigbOO8N2ib@dpg-ctpbp40gph6c73dcjppg-a.oregon-postgres.render.com/ekondo
