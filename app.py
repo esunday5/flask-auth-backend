@@ -11,7 +11,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    db = SQLAlchemy(app)
     db.init_app(app)
     bcrypt.init_app(app)
     migrate.init_app(app, db)
