@@ -1,5 +1,6 @@
 from app_config import create_app
 from routes import auth, main
+import os
 
 app = create_app()
 
@@ -8,4 +9,5 @@ app.register_blueprint(auth, url_prefix='/api/auth')
 app.register_blueprint(main, url_prefix='/api/main')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))  # Use Render's PORT environment variable
+    app.run(host='0.0.0.0', port=port, debug=True)

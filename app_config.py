@@ -3,8 +3,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from flask_cors import CORS  # Import CORS
 from config import Config
 from dotenv import load_dotenv
+import os
 import pg8000
 
 # Initialize extensions
@@ -36,6 +38,9 @@ def create_app():
 
     # Load environment variables
     load_dotenv()
+
+    # Enable CORS for all routes
+    CORS(app)
 
     # Apply middleware
     log_request_info(app)
