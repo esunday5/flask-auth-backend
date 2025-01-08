@@ -3,10 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 from config import Config
 from dotenv import load_dotenv
-import os
 import pg8000
 
 # Initialize extensions
@@ -27,13 +26,10 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Set up the JWT secret key
-    app.config['JWT_SECRET_KEY'] = 'xyzadmin@it'
-    jwt.init_app(app)
-
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
+    jwt.init_app(app)
     bcrypt.init_app(app)
 
     # Load environment variables

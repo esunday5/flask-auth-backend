@@ -12,7 +12,6 @@ main = Blueprint('main', __name__)
 def missing_token_error(error):
     return jsonify({"error": "Authorization header missing"}), 401
 
-
 @auth.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -32,40 +31,26 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
-
-users = {
-    "hyman": "11229012",
-    "ekuere": "11223344",
-    "henzie": "22446688",
-    "wilson": "44556677",
-    "emmanate": "admin@it"
-}
-
-
 @auth.route('/login', methods=['POST'])
 def login():
-    """Authenticate user and issue JWT."""
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
 
-    # Dummy user validation
-    if users.get(username) == password:
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
         token = create_access_token(identity=username)
         return jsonify(access_token=token), 200
 
     return jsonify({"message": "Invalid credentials"}), 401
 
-
 @main.route('/protected', methods=['GET'])
 @jwt_required()
 def protected():
-    """Protected route requiring JWT."""
     return jsonify(message="This is a protected route"), 200
 
-
 @main.route('/users', methods=['GET'])
-@jwt_required()  # Ensure the route is protected by JWT
+@jwt_required()
 def get_users():
     users = User.query.all()
     return jsonify([{
@@ -76,7 +61,6 @@ def get_users():
         "branch": user.branch.name if user.branch else None,
         "department": user.department.name if user.department else None
     } for user in users])
-
 
 @main.route('/test-db-connection', methods=['GET'])
 def test_db_connection():
