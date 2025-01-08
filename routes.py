@@ -35,20 +35,33 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
+users = {
+    "hyman": "11229012",
+    "ekuere": "11223344",
+    "henzie": "22446688",
+    "wilson": "44556677",
+    "emmanate": "admin@it"
+}
 
 @auth.route('/login', methods=['POST'])
 def login():
+    """Authenticate user and issue JWT."""
     data = request.get_json()
-    username_or_email = data.get('username_or_email')
+    username = data.get('username')
     password = data.get('password')
 
-    user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
+    # Dummy user validation
+    if users.get(username) == password:
+        token = create_access_token(identity=username)
+        return jsonify(access_token=token), 200
 
-    if user and user.check_password(password):
-        token = create_access_token(identity=user.id)  # Create a token for the logged-in user
-        return jsonify({'token': token}), 200
+    return jsonify({"message": "Invalid credentials"}), 401
 
-    return jsonify({'message': 'Invalid credentials'}), 401
+@main.route('/protected', methods=['GET'])
+@jwt_required()
+def protected():
+    """Protected route requiring JWT."""
+    return jsonify(message="This is a protected route"), 200
 
 
 @main.route('/users', methods=['GET'])

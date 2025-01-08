@@ -2,8 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
-from app_config import Config, app  # Import `app` from `app_config`
-from routes import register_routes  # Assuming you have a `register_routes` function
+from app_config import Config, create_app, app  # Import `app` and `create_app` from `app_config`
+from routes import auth, main, register_routes  # Assuming you have a `register_routes` function
 
 # Initialize extensions
 db = SQLAlchemy()
@@ -26,7 +26,8 @@ def create_app():
     return app
 
 # Register routes
-register_routes(app)
+app.register_blueprint(auth, url_prefix='/api/auth')
+app.register_blueprint(main, url_prefix='/api/main')
 
 if __name__ == '__main__':
     app.run(debug=True)
