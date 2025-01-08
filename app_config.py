@@ -1,28 +1,51 @@
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from config import Config
-import pg8000
 from dotenv import load_dotenv
+import pg8000
 
+# Initialize extensions
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 migrate = Migrate()
 
+def log_request_info(app):
+    """Middleware to log request details."""
+    @app.before_request
+    def before_request():
+        print(f"Request: {request.method} {request.path}")
+        print(f"Headers: {request.headers}")
+
+def validate_auth_header(app):
+    """Middleware to validate Authorization header."""
+    @app.before_request
+    def before_request():
+        if not request.headers.get("Authorization"):
+            return {"error": "Authorization header missing"}, 401
+
 def create_app():
+    """Factory function to create Flask app."""
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     jwt.init_app(app)
 
+    # Load environment variables
     load_dotenv()
 
+    # Apply middleware
+    log_request_info(app)
+    validate_auth_header(app)
+
+    # Test database connection
     try:
         connection = pg8000.connect(
             database="ekondo",
