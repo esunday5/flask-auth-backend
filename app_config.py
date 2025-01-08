@@ -1,7 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
+from flask_jwt_extended import JWTManager, jwt_required
 from flask_migrate import Migrate
 from config import Config
 from dotenv import load_dotenv
@@ -32,11 +32,14 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # JWT secret key
+    app.config['JWT_SECRET_KEY'] = 'xyzadmin@it'
+    jwt.init_app(app)
+
     # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
     bcrypt.init_app(app)
-    jwt.init_app(app)
 
     # Load environment variables
     load_dotenv()
@@ -63,5 +66,11 @@ def create_app():
     from routes import auth, main
     app.register_blueprint(auth, url_prefix='/api/auth')
     app.register_blueprint(main, url_prefix='/main')
+
+    # Example route to verify the JWT setup
+    @app.route('/protected', methods=['GET'])
+    @jwt_required()
+    def protected():
+        return jsonify(message="This is a protected route")
 
     return app
