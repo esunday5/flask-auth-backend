@@ -3,16 +3,12 @@ from app_config import db
 from models import User
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 import pg8000
-from app import register_routes
 
 auth = Blueprint('auth', __name__)
 main = Blueprint('main', __name__)
 
-# Ensure JWT Manager is initialized in your app configuration
-jwt = JWTManager()
-
 # Custom error handling for missing Authorization header
-@jwt.unauthorized_loader
+@JWTManager.unauthorized_loader
 def missing_token_error(error):
     return jsonify({"error": "Authorization header missing"}), 401
 
@@ -36,6 +32,7 @@ def register():
 
     return jsonify({'message': 'User registered successfully'}), 201
 
+
 users = {
     "hyman": "11229012",
     "ekuere": "11223344",
@@ -43,6 +40,7 @@ users = {
     "wilson": "44556677",
     "emmanate": "admin@it"
 }
+
 
 @auth.route('/login', methods=['POST'])
 def login():
@@ -57,6 +55,7 @@ def login():
         return jsonify(access_token=token), 200
 
     return jsonify({"message": "Invalid credentials"}), 401
+
 
 @main.route('/protected', methods=['GET'])
 @jwt_required()
