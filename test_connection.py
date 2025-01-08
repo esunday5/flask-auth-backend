@@ -7,7 +7,7 @@ try:
         password="aZ2ryQ9DACsQNFDY1tQouCigbOO8N2ib",
         host="dpg-ctpbp40gph6c73dcjppg-a.oregon-postgres.render.com",
         port=5432,
-        database="ekondo"  # 'database' instead of 'dbname'
+        database="ekondo"
     )
     print("Connection successful!")
     connection.close()
