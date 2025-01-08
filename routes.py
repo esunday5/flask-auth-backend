@@ -3,6 +3,7 @@ from app_config import db
 from models import User
 from flask_jwt_extended import jwt_required, create_access_token, JWTManager
 import pg8000
+from app import register_routes
 
 auth = Blueprint('auth', __name__)
 main = Blueprint('main', __name__)
