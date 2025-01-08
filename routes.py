@@ -33,15 +33,16 @@ def login():
     password = data.get('password')
 
     user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
-    
+
     if user and user.check_password(password):
         token = create_access_token(identity=user.id)
         return jsonify({'token': token}), 200
 
     return jsonify({'message': 'Invalid credentials'}), 401
 
+
 @main.route('/users', methods=['GET'])
-@jwt_required()
+# @jwt_required()  # Comment this out for testing
 def get_users():
     users = User.query.all()
     return jsonify([
@@ -54,6 +55,7 @@ def get_users():
             "department": user.department.name if user.department else None
         } for user in users
     ])
+
 
 @main.route('/test-db-connection', methods=['GET'])
 def test_db_connection():
