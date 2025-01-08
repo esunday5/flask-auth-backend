@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app_config import db
 from models import User
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required, create_access_token
 import pg8000
 
 auth = Blueprint('auth', __name__)
@@ -41,6 +41,7 @@ def login():
     return jsonify({'message': 'Invalid credentials'}), 401
 
 @main.route('/users', methods=['GET'])
+@jwt_required()
 def get_users():
     users = User.query.all()
     return jsonify([
