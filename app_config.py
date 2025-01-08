@@ -1,47 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from flask_cors import CORS
 from config import Config
-from dotenv import load_dotenv
 import pg8000
+from dotenv import load_dotenv
 
-# Initialize extensions
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 migrate = Migrate()
 
-def log_request_info(app):
-    """Middleware to log request details."""
-    @app.before_request
-    def before_request():
-        print(f"Request: {request.method} {request.path}")
-        print(f"Headers: {request.headers}")
-
 def create_app():
-    """Factory function to create Flask app."""
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
-    jwt.init_app(app)
     bcrypt.init_app(app)
+    jwt.init_app(app)
 
-    # Load environment variables
     load_dotenv()
 
-    # Enable CORS for all routes
-    CORS(app)
-
-    # Apply middleware
-    log_request_info(app)
-
-    # Test database connection
     try:
         connection = pg8000.connect(
             database="ekondo",
@@ -54,5 +35,10 @@ def create_app():
         connection.close()
     except Exception as e:
         print(f"Database connection error: {e}")
+
+    # Register blueprints
+    from routes import auth, main
+    app.register_blueprint(auth, url_prefix='/api/auth')
+    app.register_blueprint(main, url_prefix='/main')
 
     return app

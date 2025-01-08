@@ -1,13 +1,21 @@
-from app_config import create_app
-from routes import auth, main
-import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_migrate import Migrate
+from app_config import Config  # Assuming this is where your configuration is stored
 
-app = create_app()
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+migrate = Migrate()
 
-# Register blueprints
-app.register_blueprint(auth, url_prefix='/api/auth')
-app.register_blueprint(main, url_prefix='/api/main')
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
+    db.init_app(app)
+    bcrypt.init_app(app)
+    migrate.init_app(app, db)
+
+    from models import User  # Import your models after initializing db
+
+    return app
