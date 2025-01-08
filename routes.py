@@ -43,7 +43,16 @@ def login():
 @main.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{"id": user.id, "username": user.username, "email": user.email} for user in users])
+    return jsonify([
+        {
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role.name if user.role else None,
+            "branch": user.branch.name if user.branch else None,
+            "department": user.department.name if user.department else None
+        } for user in users
+    ])
 
 @main.route('/test-db-connection', methods=['GET'])
 def test_db_connection():
