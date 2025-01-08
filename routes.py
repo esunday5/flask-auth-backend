@@ -37,12 +37,21 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
-    user = User.query.filter_by(username=username).first()
-    if user and user.check_password(password):
+    # Dummy user validation
+    users = {
+        "hyman": "11229012",
+        "ekuere": "11223344",
+        "henzie": "22446688",
+        "wilson": "44556677",
+        "emmanate": "admin@it"
+    }
+
+    if users.get(username) == password:
         token = create_access_token(identity=username)
         return jsonify(access_token=token), 200
 
     return jsonify({"message": "Invalid credentials"}), 401
+
 
 @main.route('/protected', methods=['GET'])
 @jwt_required()
