@@ -42,8 +42,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
-    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)  # Corrected ForeignKey reference
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)  # Corrected ForeignKey reference
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)
 
     role = db.relationship('Role', backref='users')
     branch = db.relationship('Branch', backref='users')
@@ -52,17 +52,15 @@ class User(db.Model):
     def __repr__(self):
         return f"<User {self.username}>"
 
-    # Add set_password method to hash the password before saving
     def set_password(self, password):
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    # Add check_password method to verify the password during login
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
 
     @property
-    def role(self):
-        return self.role.name if self.role else None  # Ensure we get the role name directly
+    def role_name(self):  # Renamed to avoid conflict with the `role` relationship
+        return self.role.name if self.role else None
 
     @classmethod
     def get_user_by_credentials(cls, username_or_email):
