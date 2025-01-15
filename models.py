@@ -70,4 +70,3 @@ class User(db.Model):
         return db.session.query(User).options(joinedload(User.role)).filter(
             (User.username == username_or_email) | (User.email == username_or_email)
         ).first()
-

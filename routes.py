@@ -4,7 +4,6 @@ from models import User
 from flask_jwt_extended import create_access_token
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
-from sqlalchemy.orm.exc import NoResultFound
 import pg8000
 
 auth = Blueprint('auth', __name__)
