@@ -1,9 +1,7 @@
 from app_config import db
 from sqlalchemy.orm import joinedload
-from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 class Role(db.Model):
