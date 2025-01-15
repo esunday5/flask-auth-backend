@@ -58,3 +58,8 @@ class User(db.Model):
     # Add check_password method to verify the password during login
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
+
+    @property
+    def role(self):
+        return self.role.name if self.role else None  # Ensure we get the role name directly
+

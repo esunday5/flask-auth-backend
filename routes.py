@@ -70,3 +70,20 @@ def test_db_connection():
         return {"message": "Database connection successful!"}, 200
     except Exception as e:
         return {"error": f"Database connection error: {str(e)}"}, 500
+
+@auth.route('/get_role', methods=['POST'])
+def get_role():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        # Find user by email
+        user = User.query.filter_by(email=email).first()
+        
+        if user and user.check_password(password):  # Check password match
+            return jsonify({'role': user.role.name}), 200  # Return role
+        else:
+            return jsonify({'role': None}), 404  # If no match found, return null
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"}), 500
