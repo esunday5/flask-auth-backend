@@ -25,54 +25,58 @@ with app.app_context():
     db.create_all()  # Create all tables
 
     # Seed roles
-    if not Role.query.first():
-        roles = [
-            "admin", "officer", "approver", "reviewer", "supervisor", "super_admin", "account_officer"
-        ]
-        for role_name in roles:
+    roles = [
+        "admin", "officer", "approver", "reviewer", "supervisor", "super_admin", "account_officer"
+    ]
+    existing_roles = {role.name for role in Role.query.all()}
+    for role_name in roles:
+        if role_name not in existing_roles:
             role = Role(name=role_name)
             db.session.add(role)
-        db.session.commit()
-        print("Roles added.")
+    db.session.commit()
+    print("Roles added.")
 
     # Seed branches
-    if not Branch.query.first():
-        branches = [
-            "Head Office", "Corporate", "Effio-Ette", "Chamley", "Ekpo-Abasi", "Etim-Edem", "Watt", "Ika Ika",
-            "Ikang", "Ikot Nakanda", "Mile 8", "Oban", "Odukpani", "Uyanga", "Ugep", "Obubra", "Ikom", "Ogoja"
-        ]
-        for branch_name in branches:
+    branches = [
+        "Head Office", "Corporate", "Effio-Ette", "Chamley", "Ekpo-Abasi", "Etim-Edem", "Watt", "Ika Ika",
+        "Ikang", "Ikot Nakanda", "Mile 8", "Oban", "Odukpani", "Uyanga", "Ugep", "Obubra", "Ikom", "Ogoja"
+    ]
+    existing_branches = {branch.name for branch in Branch.query.all()}
+    for branch_name in branches:
+        if branch_name not in existing_branches:
             branch = Branch(name=branch_name)
             db.session.add(branch)
-        db.session.commit()
-        print("Branches added.")
+    db.session.commit()
+    print("Branches added.")
 
     # Seed departments
-    if not Department.query.first():
-        departments = [
-            "HR/Admin", "Account", "Risk/Compliance", "IT", "Audit", "Funds Transfer", "Credit",
-            "Recovery", "E-Business", "Legal", "Strategic Branding / Communication",
-            "Business Development", "Managing Director"
-        ]
-        head_office = Branch.query.filter_by(name="Head Office").first()
-        for department_name in departments:
+    departments = [
+        "HR/Admin", "Account", "Risk/Compliance", "IT", "Audit", "Funds Transfer", "Credit",
+        "Recovery", "E-Business", "Legal", "Strategic Branding / Communication",
+        "Business Development", "Managing Director"
+    ]
+    head_office = Branch.query.filter_by(name="Head Office").first()
+    existing_departments = {department.name for department in Department.query.all()}
+    for department_name in departments:
+        if department_name not in existing_departments and head_office:
             department = Department(name=department_name, branch_id=head_office.id)
             db.session.add(department)
-        db.session.commit()
-        print("Departments added.")
+    db.session.commit()
+    print("Departments added.")
 
     # Seed users
-    if not User.query.first():
-        user_data = [
-            ('Hyacinth', 'Sunday', 'hyman', 'hyacinth.sunday@ekondomfbank.com', '11229012', 'officer', 'Head Office', 'IT'),
-            ('Ekuere', 'Akpan', 'ekuere', 'ekuere.akpan@ekondomfbank.com', '11223344', 'approver', 'Head Office', 'Managing Director'),
-            ('Henry', 'Ikpeme', 'henzie', 'henry.etim@ekondomfbank.com', '22446688', 'reviewer', 'Head Office', 'Risk/Compliance'),
-            ('Ubong', 'Wilson', 'wilson', 'ubong.wilson@ekondomfbank.com', '44556677', 'supervisor', 'Head Office', 'IT'),
-            ('Emmanuel', 'Sunday', 'emmanate', 'emmyblaq3@gmail.com', 'admin@it', 'admin', 'Head Office', 'IT'),
-            ('Precious', 'Pius', 'Presh', 'grace.johnson@ekondomfbank.com', 'ac123456', 'account_officer', 'Head Office', 'Account')
-        ]
+    user_data = [
+        ('Hyacinth', 'Sunday', 'hyman', 'hyacinth.sunday@ekondomfbank.com', '11229012', 'officer', 'Head Office', 'IT'),
+        ('Ekuere', 'Akpan', 'ekuere', 'ekuere.akpan@ekondomfbank.com', '11223344', 'approver', 'Head Office', 'Managing Director'),
+        ('Henry', 'Ikpeme', 'henzie', 'henry.etim@ekondomfbank.com', '22446688', 'reviewer', 'Head Office', 'Risk/Compliance'),
+        ('Ubong', 'Wilson', 'wilson', 'ubong.wilson@ekondomfbank.com', '44556677', 'supervisor', 'Head Office', 'IT'),
+        ('Emmanuel', 'Sunday', 'emmanate', 'emmyblaq3@gmail.com', 'admin@it', 'admin', 'Head Office', 'IT'),
+        ('Precious', 'Pius', 'Presh', 'grace.johnson@ekondomfbank.com', 'ac123456', 'account_officer', 'Head Office', 'Account')
+    ]
 
-        for first_name, last_name, username, email, password, role_name, branch_name, department_name in user_data:
+    existing_users = {(user.username, user.email) for user in User.query.all()}
+    for first_name, last_name, username, email, password, role_name, branch_name, department_name in user_data:
+        if (username, email) not in existing_users:
             role = Role.query.filter_by(name=role_name).first()
             branch = Branch.query.filter_by(name=branch_name).first()
             department = Department.query.filter_by(name=department_name).first()
@@ -90,8 +94,8 @@ with app.app_context():
                 user.set_password(password)  # Ensure password is hashed
                 db.session.add(user)
 
-        db.session.commit()
-        print("Users added.")
+    db.session.commit()
+    print("Users added.")
 
 with app.app_context():
     db.create_all()  # Creates the database tables

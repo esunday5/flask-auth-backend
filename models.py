@@ -11,15 +11,24 @@ class Role(db.Model):
         return f"<Role {self.name}>"
 
 class Branch(db.Model):
+    __tablename__ = 'branches'  # Ensuring this matches the table name
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String(128), nullable=False, unique=True)
+
+    # Relationship with Department
+    departments = db.relationship('Department', back_populates='branch', lazy=True)
 
     def __repr__(self):
         return f"<Branch {self.name}>"
 
 class Department(db.Model):
+    __tablename__ = 'departments'  # Ensuring this matches the table name
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), unique=True, nullable=False)
+    name = db.Column(db.String(150), unique=True, nullable=False)
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)
+
+    # Relationship to Branch
+    branch = db.relationship('Branch', back_populates='departments')
 
     def __repr__(self):
         return f"<Department {self.name}>"
@@ -32,8 +41,8 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey('role.id'), nullable=False)
-    branch_id = db.Column(db.Integer, db.ForeignKey('branch.id'), nullable=False)
-    department_id = db.Column(db.Integer, db.ForeignKey('department.id'), nullable=False)
+    branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'), nullable=False)  # Corrected ForeignKey reference
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), nullable=False)  # Corrected ForeignKey reference
 
     role = db.relationship('Role', backref='users')
     branch = db.relationship('Branch', backref='users')
