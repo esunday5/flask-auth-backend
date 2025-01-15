@@ -1,6 +1,9 @@
 from app_config import db
+from sqlalchemy.orm import joinedload
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
+db = SQLAlchemy()
 bcrypt = Bcrypt()
 
 class Role(db.Model):
@@ -62,4 +65,11 @@ class User(db.Model):
     @property
     def role(self):
         return self.role.name if self.role else None  # Ensure we get the role name directly
+
+    @classmethod
+    def get_user_by_credentials(cls, username_or_email):
+        # Query user and eagerly load the role
+        return db.session.query(User).options(joinedload(User.role)).filter(
+            (User.username == username_or_email) | (User.email == username_or_email)
+        ).first()
 

@@ -36,12 +36,14 @@ def login():
         username_or_email = data.get('username_or_email')
         password = data.get('password')
 
-        user = User.query.filter((User.username == username_or_email) | (User.email == username_or_email)).first()
-        
+        # Fetch the user by username or email with the role eagerly loaded
+        user = User.get_user_by_credentials(username_or_email)
+
         if user and user.check_password(password):
+            # Create the access token for the user
             token = create_access_token(identity=user.id)
             expires_in = 24 * 60 * 60  # 24 hours in seconds
-            return jsonify({'token': token, 'expires_in': expires_in}), 200
+            return jsonify({'token': token, 'expires_in': expires_in, 'role': user.role}), 200  # Return the role as well
 
         return jsonify({'message': 'Invalid credentials'}), 401
     except Exception as e:
