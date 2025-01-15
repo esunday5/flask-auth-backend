@@ -40,11 +40,13 @@ def login():
         
         if user and user.check_password(password):
             token = create_access_token(identity=user.id)
-            return jsonify({'token': token}), 200
+            expires_in = 24 * 60 * 60  # 24 hours in seconds
+            return jsonify({'token': token, 'expires_in': expires_in}), 200
 
         return jsonify({'message': 'Invalid credentials'}), 401
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"}), 500
+
 
 @main.route('/users', methods=['GET'])
 def get_users():
