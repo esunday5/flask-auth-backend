@@ -117,21 +117,19 @@ def test_db_connection():
 
 @auth.route('/get_role', methods=['POST'])
 def get_role():
-    try:
-        data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+    data = request.get_json()
+    username_or_email = data.get('username_or_email')
+    password = data.get('password')
+    
+    # Authenticate the user (you can add the password check here)
+    user = User.get_user_by_credentials(username_or_email)
 
-        # Find user by email or username
-        user = User.query.filter(
-            (User.username == email) | (User.email == email)
-        ).first()
-
-        if user and user.check_password(password):  # Check password match
-            return jsonify({'role': user.role.name}), 200  # Return role
+    if user:
+        # Check the password (you can add password check logic here)
+        if user.check_password(password):
+            return jsonify({"role": user.role_name}), 200
         else:
-            return jsonify({'role': None}), 404  # If no match found, return null
-
-    except Exception as e:
-        return jsonify({"message": f"Error: {str(e)}"}), 500
+            return jsonify({"message": "Invalid credentials"}), 401
+    else:
+        return jsonify({"message": "User not found"}), 404
 
