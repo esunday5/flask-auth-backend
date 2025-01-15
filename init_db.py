@@ -71,7 +71,7 @@ with app.app_context():
         ('Henry', 'Ikpeme', 'henzie', 'henry.etim@ekondomfbank.com', '22446688', 'reviewer', 'Head Office', 'Risk/Compliance'),
         ('Ubong', 'Wilson', 'wilson', 'ubong.wilson@ekondomfbank.com', '44556677', 'supervisor', 'Head Office', 'IT'),
         ('Emmanuel', 'Sunday', 'emmanate', 'emmyblaq3@gmail.com', 'admin@it', 'admin', 'Head Office', 'IT'),
-        ('Precious', 'Pius', 'Presh', 'grace.johnson@ekondomfbank.com', 'ac123456', 'account_officer', 'Head Office', 'Account')
+        ('Precious', 'Pius', 'presh', 'grace.johnson@ekondomfbank.com', 'ac123456', 'account_officer', 'Head Office', 'Account')
     ]
 
     existing_users = {(user.username, user.email) for user in User.query.all()}
